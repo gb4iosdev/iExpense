@@ -24,12 +24,13 @@ struct ContentView: View {
                         }
                         Spacer()
                         Text("$\(item.amount)")
+                            .amountStyle(amount: item.amount)
                     }
                 }
                 .onDelete(perform: removeItems)
             }
             .navigationBarTitle("iExpense")
-            .navigationBarItems(trailing:
+            .navigationBarItems(leading: EditButton(), trailing:
                 Button(action: {
                     self.showingAddExpense = true
                 }) {
@@ -44,6 +45,28 @@ struct ContentView: View {
     
     func removeItems(at offsets: IndexSet) {
         expenses.items.remove(atOffsets: offsets)
+    }
+}
+
+struct AmountStyle: ViewModifier {
+    var amount: Int
+    func body(content: Content) -> some View {
+        var colour: Color
+        if amount < 10 {
+            colour = .blue
+        } else if amount < 100 {
+            colour = .green
+        } else {
+            colour = .red
+        }
+        return content
+            .foregroundColor(colour)
+    }
+}
+
+extension View {
+    func amountStyle(amount: Int) -> some View {
+        self.modifier(AmountStyle(amount: amount))
     }
 }
 

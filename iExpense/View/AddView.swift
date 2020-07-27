@@ -19,6 +19,8 @@ struct AddView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
+    @State private var showAlert = false
+    
     var body: some View {
         NavigationView {
             Form {
@@ -36,12 +38,18 @@ struct AddView: View {
             .navigationBarTitle("Add New Expense")
             .navigationBarItems(trailing:
                 Button("Save") {
-                    guard let actualAmount = Int(self.amount) else { return }
+                    guard let actualAmount = Int(self.amount) else {
+                        self.showAlert = true
+                        return
+                    }
                     let item = ExpenseItem(name: self.name, type: self.type, amount: actualAmount)
                     self.expenses.items.append(item)
                     self.presentationMode.wrappedValue.dismiss()  //Causes an inability to re-show the view
                 }
             )
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Amount format incorrect"), message: Text("Please enter a whole dollar amount"), dismissButton: .default(Text("OK")))
+            }
         }
     }
 }
